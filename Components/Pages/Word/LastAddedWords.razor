@@ -1,0 +1,75 @@
+﻿@page "/word/last-added"
+
+@inject WordController wordController
+@inject OnStudyService onStudyService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@rendermode InteractiveServer
+
+<h3>Last Added Words to system</h3>
+<ul>
+    @foreach (var word in Words)
+    {
+        <li>
+            <NavLink href="@($"word/en/{@word.Value}")">" @word.Value": </NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    @{
+                        var isOnStudy = OnStudies.FirstOrDefault(d => d.WordId == word.Id) != null;
+                    }
+                    @if (isOnStudy)
+                    {
+                        <button @onclick="()=>RemoveOnStudy(word)">remove from onStudy</button>
+                    }
+                    else
+                    {
+                        <button @onclick="()=>AddOnStudy(word)">add onStudy</button>
+                    }
+                </Authorized>
+            </AuthorizeView>
+        </li>
+    }
+</ul>
+
+@code {
+    List<Word> Words { get; set; } = new();
+    List<OnStudy> OnStudies { get; set; } = new();
+    private string userId = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Words = await wordController.LastAddedWords(1, 100);
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var OnStudiesResp = await onStudyService.GetWordsOnStudy(false, userId, 1, 100, new());
+            if (OnStudiesResp.Ok)
+            {
+                OnStudies = OnStudiesResp.Data;
+            }
+        }
+        base.OnInitializedAsync();
+    }
+
+    async Task AddOnStudy(Word word)
+    {
+        var res = await onStudyService.SetWordOnStudy(userId, word.Id);
+        if (res.Ok)
+        {
+            OnStudies.Add(res.Data);
+        }
+    }
+
+    async Task RemoveOnStudy(Word word)
+    {
+        var res = await onStudyService.RemoveWordOnStudy(userId, word.Id);
+        if (res.Ok)
+        {
+            OnStudies.RemoveAll(os => os.WordId == word.Id);
+        }
+    }
+}

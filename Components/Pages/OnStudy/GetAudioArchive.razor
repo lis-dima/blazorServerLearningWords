@@ -1,0 +1,87 @@
+﻿@using lewBlazorServer.Services.Helpers
+@using lewBlazorServer.Services.MergeAudios
+
+@page "/onstudy/audio-archive"
+@rendermode InteractiveServer
+
+@inject OnStudyService onStudyService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>GetAudioArchive</h3>
+@if (!IsArchiveCreationProcess && !CanDownloadArchive)
+{
+    <button @onclick="GetFinelArchive">generate audio archive</button>
+}
+else if (IsArchiveCreationProcess)
+{
+    <span>Is in process...</span>
+} else if (CanDownloadArchive)
+{   
+<a href="@ArchivePath" download>Download .zip</a>
+}
+
+@code {
+    bool IsArchiveCreationProcess { get; set; }
+    bool CanDownloadArchive { get; set; }
+    string ArchivePath { get; set; }
+    private string userId = string.Empty;
+    List<OnStudy> OnStudies { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var OnStudiesResp = await onStudyService.GetWordsOnStudy(true, userId, 1, 100, new() { ShouldIncludeExamples = true, TranslationLanguages = new() { Language.Ru } });
+            if (OnStudiesResp.Ok)
+            {
+                OnStudies = OnStudiesResp.Data;
+            }
+            ArchivePath = Storage.LocalPath2Web(Storage.GetUserArchivepath(userId)); 
+        }
+    }
+
+    public void GetFinelArchive()
+    {
+        IsArchiveCreationProcess = true;
+
+        lewBlazorServer.Services.Helpers.Storage.PrepareUserFolders(userId, true);
+        
+        var wordAudioPath = "";
+        var translationAudioPath = "";
+        var example_1_Path = "";
+        foreach (var os in OnStudies)
+        {
+            wordAudioPath = Storage.GetAudioPath(Language.En, EntityType.Word, os.Word.Id, false );
+            var ruTranslations = os.Word.Translations.Where(t => t.Language == Language.Ru).ToList();
+            if(ruTranslations.Count > 0)
+            {
+                translationAudioPath = Storage.GetAudioPath(ruTranslations[0].Language, EntityType.Translation, ruTranslations[0].Id, false );
+            }
+            if(os.Word.Examples.Count > 0)
+            {
+                example_1_Path = Storage.GetAudioPath(os.Word.Examples[0].Language, EntityType.Example, os.Word.Examples[0].Id, false );
+            }
+
+            var mergedName = os.Word.Value + "-en-" + ".wav";
+            var mergedPath = Path.Combine(Storage.GetUserDailyFolder_MergedFolder(userId), mergedName);
+            MergeAudios.Merge(new string[] { wordAudioPath, translationAudioPath, example_1_Path }, mergedPath);
+
+            mergedName = os.Word.Value + "-ru-" + ".wav";
+            mergedPath = Path.Combine(Storage.GetUserDailyFolder_MergedFolder(userId), mergedName);
+            MergeAudios.Merge(new string[] { wordAudioPath, example_1_Path, translationAudioPath }, mergedPath);
+        }
+
+        var path4MergedFolder = lewBlazorServer.Services.Helpers.Storage.GetUserDailyFolder_MergedFolder(userId);
+        string[] filePaths = Directory.GetFiles(path4MergedFolder);
+
+        var userDailyFolderArchive = Storage.GetUserArchivepath(userId);
+        lewBlazorServer.Services.MergeAudios.MergeAudios.CreateAudioArchiveFromFilesPaths(filePaths, userDailyFolderArchive);
+        CanDownloadArchive = true;
+        IsArchiveCreationProcess = false;
+    }
+
+}

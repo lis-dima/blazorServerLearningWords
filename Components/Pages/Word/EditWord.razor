@@ -1,0 +1,71 @@
+﻿@page "/word/edit/en/{UrlWord}"
+
+@rendermode InteractiveServer
+
+@implements IDisposable
+
+@inject WordController wordController
+@inject NavigationManager navManager
+
+<h3>Edit</h3>
+<div class="d-flex" style="justify-content: space-evenly;">
+
+@if (Word.Descriptions != null)
+{
+    <ul>
+
+    @foreach (var desc in Word.Descriptions)
+    {
+        <li @onclick="()=>wordController.SetOnEdit((IWordChildEntity)desc)">@desc.Value</li>
+    }
+    </ul>
+}
+@if (Word.Examples != null)
+{
+    <ul>
+
+    @foreach (var item in Word.Examples)
+    {
+        <li @onclick="()=>wordController.SetOnEdit((IWordChildEntity)item)">@item.Value</li>
+    }
+    </ul>
+}
+</div>
+
+<hr />
+<lewBlazorServer.Components.Elements.FormChildEntity></lewBlazorServer.Components.Elements.FormChildEntity>
+
+
+@code {
+    [Parameter]
+    public string UrlWord { get; set; }
+    Word Word { get; set; } = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        wordController.OnAfterWordChanged += handler_OnAfterWordChanged;
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (UrlWord != "")
+        {
+            var responce = await wordController.GetWord(UrlWord, Language.Ru);
+            if (responce.Ok)
+            {
+                Word = responce.Data;
+            }
+        }
+    }
+
+    void handler_OnAfterWordChanged(Word updatedWord)
+    {
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        wordController.OnAfterWordChanged -= handler_OnAfterWordChanged;
+    }
+}

@@ -1,0 +1,38 @@
+﻿@rendermode InteractiveServer
+
+@inject WordController wordController
+@implements IDisposable
+
+@if (Element2Edit !=null)
+{
+    <EditForm Model="Element2Edit" FormName="editIWordChildEntity">
+        @Element2Edit?.Value
+        <InputText @bind-Value="@Element2Edit.Value"></InputText>
+    </EditForm>
+    <button @onclick="UpdateHandler">Update</button>
+}
+@code {
+    IWordChildEntity Element2Edit { get; set; }
+
+    protected override void OnInitialized()
+    {
+        wordController.OnSetOnEditWordChildEntity += handler_OnSetOnEditWordChildEntity;
+    }
+
+    void IDisposable.Dispose()
+    {
+        wordController.OnSetOnEditWordChildEntity -= handler_OnSetOnEditWordChildEntity;
+    }
+
+    void handler_OnSetOnEditWordChildEntity(IWordChildEntity element)
+    {
+        Element2Edit = element;
+        StateHasChanged();
+    }
+
+    async Task UpdateHandler()
+    {
+        await wordController.UpdateWordChildEntity(Element2Edit);
+    }
+
+}

@@ -1,0 +1,33 @@
+﻿@page "/onstudy/today"
+
+@inject OnStudyService onStudyService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Onstudy Today</h3>
+<ul>
+    @foreach (var onStudy in OnStudies)
+    {
+        <li>@onStudy.Word.Value</li>
+    }
+</ul>
+
+@code {
+    private string userId = string.Empty;
+    List<OnStudy> OnStudies { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var OnStudiesResp = await onStudyService.GetWordsOnStudy(true, userId, 1, 100, new());
+            if (OnStudiesResp.Ok)
+            {
+                OnStudies = OnStudiesResp.Data;
+            }
+        }
+    }
+}

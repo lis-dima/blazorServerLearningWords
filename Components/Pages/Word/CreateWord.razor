@@ -1,0 +1,162 @@
+﻿@page "/word/en/create"
+
+@rendermode InteractiveServer
+
+@inject NavigationManager navManager
+@inject WordController createWordService
+
+<h3>Create</h3>
+<div class="">
+    <div>
+        Word:
+        <InputText placeholder="Word" @bind-Value="@Model.Word" />
+    </div>
+    <div>
+        Translation:
+        <InputText placeholder="Transcription UK" @bind-Value="@Model.Transcription" />
+    </div>
+</div>
+<div class="d-flex">
+    <div>
+        <div>
+            <ul>
+                @if (Model.Descriptions != null)
+                    @foreach (var description in Model.Descriptions)
+                    {
+                        <li @onclick="()=>RemoveAndEdit(description.Value)">@description.Value</li>
+                    }
+            </ul>
+            <InputSelect @bind-Value="@inputDescriptionLang" >
+                @foreach (var country in Enum.GetValues(typeof(Language)))
+                {
+                    <option value="@country">@country</option>
+                }
+            </InputSelect>
+        </div>
+        <div>
+            <br />
+            <InputText @bind-Value="@inputDescription"></InputText>
+            <button @onclick="AddNewDescription">Add</button>
+        </div>
+    </div>
+    <div>
+        <div>
+            <ul>
+                @if (Model.Translations != null)
+                    @foreach (var trans in Model.Translations)
+                    {
+                        <li @onclick="()=>RemoveAndEdit(trans.Value)">@trans.Value</li>
+                    }
+            </ul>
+            <InputSelect @bind-Value="@inputTranslationLang" >
+                @foreach (var country in Enum.GetValues(typeof(Language)))
+                {
+                    <option value="@country">@country</option>
+                }
+            </InputSelect>
+        </div>
+        <div>
+            <br />
+            <InputText @bind-Value="@inputTranslation"></InputText>
+            <button @onclick="AddNewTranslation">Add</button>
+        </div>
+    </div>
+    <div>
+        <div>
+
+            <ul>
+                @if (Model.Examples != null)
+                    @foreach (var example in Model.Examples)
+                    {
+                        <li @onclick="()=>RemoveAndEdit(example.Value)">@example.Value</li>
+                    }
+            </ul>
+        </div>
+        <div>
+            <br />
+            <InputText @bind-Value="@inputExample"></InputText>
+            <button @onclick="AddNewExanple">Add</button>
+        </div>
+    </div>
+</div>
+
+<button @onclick="TryCreateWord">Create new Word</button>
+<button @onclick="Go2Word3">Go2Word3</button>
+
+@code {
+    public CreateWordDto Model { get; set; } = new();
+    public string inputDescription;
+    public Language inputDescriptionLang;
+    public string inputTranslation;
+    public Language inputTranslationLang = Language.Ru;
+    public string inputExample;
+
+    protected override Task OnInitializedAsync()
+    {
+
+        Description d1 = new Description() { Value = "Description 1" };
+        Description d2 = new Description() { Value = "Description 2" };
+        Description d3 = new Description() { Value = "Description 3" };
+
+        Translation t1 = new Translation() { Language = Language.Ru, Value = "Перевод 1 " };
+        Translation t2 = new Translation() { Language = Language.Ua, Value = "Переклад 2 " };
+
+        Example e1 = new Example() { Value = "Example 1" };
+        Example e2 = new Example() { Value = "Example 2" };
+
+        Model.Translations.Add(t1);
+        Model.Translations.Add(t2);
+
+        Model.Descriptions.Add(d1);
+        Model.Descriptions.Add(d2);
+        Model.Descriptions.Add(d3);
+
+        Model.Examples.Add(e1);
+        Model.Examples.Add(e2);
+        return base.OnInitializedAsync();
+    }
+
+    void RemoveAndEdit(string text)
+    {
+        var res = 0;
+        res = Model.Descriptions.RemoveAll(d => d.Value == text);
+        if (res != 0)
+            inputDescription = text;
+        res = Model.Translations.RemoveAll(d => d.Value == text);
+        if (res != 0)
+            inputTranslation = text;
+        res = Model.Examples.RemoveAll(d => d.Value == text);
+        if (res != 0)
+            inputExample = text;
+    }
+
+    public async Task TryCreateWord()
+    {
+        await createWordService.CreateWord(Model);
+    }
+
+    public void Go2Word3()
+    {
+        navManager.NavigateTo("/word/en/3");
+    }
+    private void AddNewDescription(MouseEventArgs e)
+    {
+        var text2Add = CheckText(inputDescription);
+        Model.Descriptions.Add(new() { Value = text2Add, Language = inputDescriptionLang });
+    }
+    private void AddNewTranslation(MouseEventArgs e)
+    {
+        var text2Add = CheckText(inputTranslation);
+        Model.Translations.Add(new() { Value = text2Add, Language = inputTranslationLang  });
+    }
+    private void AddNewExanple(MouseEventArgs e)
+    {
+        var text2Add = CheckText(inputExample);
+        Model.Examples.Add(new() { Value = text2Add });
+    }
+
+    string CheckText(string text)
+    {
+        return text;
+    }
+}

@@ -1,0 +1,80 @@
+﻿@page "/word/en/{UrlWord}"
+@inject WordController wordController
+@rendermode InteractiveServer
+
+<h2>@Word.Value</h2>
+[@Word.Transcription]
+@if (@Word.Id != 0)
+{
+    <audio controls>
+        <source src="@($"storages/global/{EnumConverter.TtsLang( Word.Language)}/Word/{Word.Id}.wav")" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <ul>
+
+        @if (Word.Descriptions != null)
+            @foreach (var item in Word.Descriptions)
+            {
+                <li>
+                    @item.Value
+                    <audio controls>
+                        <source src="@($"storages/global/{EnumConverter.TtsLang( item.Language)}/Description/{item.Id}.wav")" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </li>
+            }
+    </ul>
+    <ul>
+
+        @if (Word.Translations != null)
+            @foreach (var item in Word.Translations)
+            {
+                <li>
+                    @item.Value
+                    <audio controls>
+                        <source src="@($"storages/global/{EnumConverter.TtsLang( item.Language)}/Translation/{item.Id}.wav")" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </li>
+            }
+    </ul>
+    <ul>
+
+        @if (Word.Examples != null)
+            @foreach (var item in Word.Examples)
+            {
+                <li>
+                    @item.Value
+                    <audio controls>
+                        <source src="@($"storages/global/{EnumConverter.TtsLang( item.Language)}/Example/{item.Id}.wav")" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </li>
+            }
+    </ul>
+
+    <button>Add to studying</button>
+    <button>Remove from studying</button>
+}
+else
+{
+    <span>Loading..</span>
+}
+
+@code {
+    [Parameter]
+    public string UrlWord { get; set; }
+    Word Word { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (UrlWord != "")
+        {
+            var responce = await wordController.GetWord(UrlWord, Language.Ru);
+            if (responce.Ok)
+            {
+                Word = responce.Data;
+            }
+        }
+    }
+}

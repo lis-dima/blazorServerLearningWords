@@ -1,0 +1,98 @@
+﻿@page "/exercise/cycle-repetition"
+@rendermode InteractiveServer
+
+@inject OnStudyService onStudyService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Onstudy Today</h3>
+<ul>
+    @foreach (var onStudy in OnStudies)
+    {
+        var isFirstElement = OnStudies.First() == onStudy;
+        <li class='@(isFirstElement ? "":"d-none")'>
+            <div>
+                <b>
+                    @onStudy.Word.Value
+                </b>
+                <span class='@(ShowExamples ? "":"d-none")'>
+                    <hr>
+                    <ul>
+                        @foreach (var example in onStudy.Word.Examples)
+                        {
+                            <ol>@example.Value</ol>
+                        }
+                    </ul>
+                    <hr>
+                </span>
+                <span class='@(ShowTranslations ? "":"d-none")'>
+                    <hr>
+                    <ul>
+                        @foreach (var translation in onStudy.Word.Translations)
+                        {
+                            <ol>@translation.Value</ol>
+                        }
+                    </ul>
+                    <hr>
+                </span>
+            </div>
+            <div>
+                <button class='@(ShowExamples ? "d-none" : "")' @onclick="()=>ShowExamples = true">Show examples </button>
+                <button class='@(ShowTranslations ? "d-none" : "")' @onclick="()=>ShowTranslations = true">Show Translations </button>
+                <hr>
+                <button @onclick="()=>HideOnStudy(onStudy)">Hide for now</button>
+                <button @onclick="()=>IncreaseOnStudyLvl(onStudy)">Increase onStudy lvl</button>
+                <button @onclick="()=>DecreaseOnStudyLvl(onStudy)">Decrease onStudy lvl</button>
+            </div>
+        </li>
+    }
+</ul>
+
+@code {
+
+    bool ShowExamples { get; set; }
+    bool ShowTranslations { get; set; }
+    private string userId = string.Empty;
+    List<OnStudy> OnStudies { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            WordQueryRequest wqr = new() { ShouldIncludeExamples = true, TranslationLanguages = new() { Language.Ru } };
+            var OnStudiesResp = await onStudyService.GetWordsOnStudy(true, userId, 1, 100, wqr);
+            if (OnStudiesResp.Ok)
+            {
+                PrepareOnStudy(OnStudiesResp.Data);
+                // OnStudies = OnStudiesResp.Data;
+            }
+        }
+    }
+
+    void PrepareOnStudy(List<OnStudy> onStudies)
+    {
+        Sortings.Shuffle<OnStudy>(onStudies);
+        OnStudies = onStudies;
+    }
+
+    void HideOnStudy(OnStudy onStudy)
+    {
+        ShowExamples = false;
+        ShowTranslations = false;
+        OnStudies.Remove(onStudy);
+    }
+
+    public async Task IncreaseOnStudyLvl(OnStudy onStudy)
+    {
+        await onStudyService.IncreaseOnStudyLvl(onStudy);
+    }
+
+    public async Task DecreaseOnStudyLvl(OnStudy onStudy)
+    {
+        await onStudyService.DecreaseOnStudyLvl(onStudy);
+    }
+
+}

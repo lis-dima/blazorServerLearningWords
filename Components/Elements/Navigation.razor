@@ -1,25 +1,44 @@
-﻿<div>
-    <NavLink class="nav-link" href="word/last-added">
-        <span class="bi bi-person-badge-nav-menu" aria-hidden="true">last added words</span>
-    </NavLink>
+﻿@rendermode InteractiveServer
+
+<div class="d-flex justify-content-between">
     <AuthorizeView>
         <Authorized>
             <NavLink class="nav-link" href="word/en/create">
                 <span class="bi bi-person-badge-nav-menu" aria-hidden="true"> Create new word</span>
             </NavLink>
-            <NavLink class="nav-link" href="onstudy/all-words">
-                <span class="bi bi-person-badge-nav-menu" aria-hidden="true">onstudy/all-words</span>
-            </NavLink>
-            <NavLink class="nav-link" href="onstudy/today">
-                <span class="bi bi-person-badge-nav-menu" aria-hidden="true">onstudy-today</span>
+        </Authorized>
+    </AuthorizeView>
+    <NavLink class="nav-link" href="word/last-added">
+        <span class="bi bi-person-badge-nav-menu" aria-hidden="true">Last added words</span>
+    </NavLink>
+    <AuthorizeView>
+        <Authorized>
+            <li class="nav-item dropdown" @onmouseover="()=>OnStudyDropDownShow = true" @onmouseout="()=>OnStudyDropDownShow = false">
+                <span class="nav-link dropdown-toggle"
+                      aria-haspopup="true"
+                      aria-expanded="@OnStudyDropDownShow">
+                    On study
+                </span>
+                <div class="@($"dropdown-menu {(OnStudyDropDownShow ? "show" : "")}")" aria-labelledby="navbarDropdown" @onclick="()=>OnStudyDropDownShow = false">
+                    <NavLink class="nav-link dropdown-item" href="onstudy/all-words">
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true">All words</span>
+                    </NavLink>
+                    <NavLink class="nav-link dropdown-item" href="onstudy/today">
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true">Today</span>
+                    </NavLink>
+                </div>
+            </li>
+            <NavLink class="nav-link" href="exercise/flash-recall">
+                <span class="bi bi-person-badge-nav-menu" aria-hidden="true">Flash recall</span>
             </NavLink>
             <NavLink class="nav-link" href="onstudy/audio-archive">
                 <span class="bi bi-person-badge-nav-menu" aria-hidden="true">audio-archive</span>
             </NavLink>
         </Authorized>
     </AuthorizeView>
+
 </div>
 
 @code {
-
+    bool OnStudyDropDownShow { get; set; }
 }

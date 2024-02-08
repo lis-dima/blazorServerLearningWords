@@ -5,83 +5,95 @@
 @inject NavigationManager navManager
 @inject WordController createWordService
 
-<h3>Create</h3>
-<div class="">
-    <div>
-        Word:
-        <InputText placeholder="Word" @bind-Value="@Model.Word" />
+<PageTitle>Create new word</PageTitle>
+<div class="container">
+    <div  >
+        <div class="form-group row">
+            <label for="wordinput" class="col-sm-2 col-form-label">Word:</label>
+            <div class="col-sm-10  ">
+              <InputText  @bind-Value="@Model.Word" class="form-control " id="wordinput" placeholder="Word" />
+            </div>
+        </div>
+        <div class="form-group row mt-2 ">
+            <label for="translationinput" class="col-sm-2 col-form-label">Transcription:</label>
+            <div class="col-sm-10 ">
+              <InputText  @bind-Value="@Model.Transcription" class="form-control " id="translationinput" placeholder="Transcription UK" />
+            </div>
+        </div>
     </div>
-    <div>
-        Translation:
-        <InputText placeholder="Transcription UK" @bind-Value="@Model.Transcription" />
+    <div class="d-flex mt-3">
+        <div class="col-4">
+            <div>
+                <h3>Descriptions:</h3>
+                <ul>
+                    @if (Model.Descriptions != null)
+                        @foreach (var description in Model.Descriptions)
+                        {
+                            <li @onclick="()=>RemoveAndEdit(description.Value)">@description.Value</li>
+                        }
+                </ul>
+            </div>
+            <div class="p-2">
+                <InputTextArea  @bind-Value="@inputDescription" class="form-control"></InputTextArea >
+                <div class="d-flex justify-content-end py-2">
+                    <Dropdown 
+                        Title="@inputDescriptionLang.ToString()"
+                        Options="@(Enum.GetNames(typeof(Language)).ToList())" 
+                        OnClickEvent="@(option => inputDescriptionLang = EnumConverter.LangFromStr(option))"
+                        Classes="mx-2"
+                    />
+                    <button @onclick="AddNewDescription" class="btn btn-outline-primary ">Add</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div>
+                <h3>Translations:</h3>
+                <ul>
+                    @if (Model.Translations != null)
+                        @foreach (var trans in Model.Translations)
+                        {
+                            <li @onclick="()=>RemoveAndEdit(trans.Value)">@trans.Value</li>
+                        }
+                </ul>
+            </div>
+            <div class="p-2">
+                <InputTextArea  @bind-Value="@inputTranslation" class="form-control"></InputTextArea >
+                <div class="d-flex justify-content-end py-2">
+                    <Dropdown 
+                        Title="@inputTranslationLang.ToString()"
+                        Options="@(Enum.GetNames(typeof(Language)).ToList())" 
+                        OnClickEvent="@(option => inputTranslationLang = EnumConverter.LangFromStr(option))" 
+                        Classes="mx-2"
+                    />
+                    <button @onclick="AddNewTranslation" class="btn btn-outline-primary ">Add</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div>
+                <h3>Examples:</h3>
+                <ul>
+                    @if (Model.Examples != null)
+                        @foreach (var example in Model.Examples)
+                        {
+                            <li @onclick="()=>RemoveAndEdit(example.Value)">@example.Value</li>
+                        }
+                </ul>
+            </div>
+            <div class="p-2">
+                <InputTextArea  @bind-Value="@inputExample" class="form-control"></InputTextArea >
+                <div class="d-flex justify-content-end py-2">
+                    <button @onclick="AddNewExanple" class="btn btn-outline-primary ">Add</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
-<div class="d-flex">
-    <div>
-        <div>
-            <ul>
-                @if (Model.Descriptions != null)
-                    @foreach (var description in Model.Descriptions)
-                    {
-                        <li @onclick="()=>RemoveAndEdit(description.Value)">@description.Value</li>
-                    }
-            </ul>
-            <InputSelect @bind-Value="@inputDescriptionLang" >
-                @foreach (var country in Enum.GetValues(typeof(Language)))
-                {
-                    <option value="@country">@country</option>
-                }
-            </InputSelect>
-        </div>
-        <div>
-            <br />
-            <InputText @bind-Value="@inputDescription"></InputText>
-            <button @onclick="AddNewDescription">Add</button>
-        </div>
-    </div>
-    <div>
-        <div>
-            <ul>
-                @if (Model.Translations != null)
-                    @foreach (var trans in Model.Translations)
-                    {
-                        <li @onclick="()=>RemoveAndEdit(trans.Value)">@trans.Value</li>
-                    }
-            </ul>
-            <InputSelect @bind-Value="@inputTranslationLang" >
-                @foreach (var country in Enum.GetValues(typeof(Language)))
-                {
-                    <option value="@country">@country</option>
-                }
-            </InputSelect>
-        </div>
-        <div>
-            <br />
-            <InputText @bind-Value="@inputTranslation"></InputText>
-            <button @onclick="AddNewTranslation">Add</button>
-        </div>
-    </div>
-    <div>
-        <div>
-
-            <ul>
-                @if (Model.Examples != null)
-                    @foreach (var example in Model.Examples)
-                    {
-                        <li @onclick="()=>RemoveAndEdit(example.Value)">@example.Value</li>
-                    }
-            </ul>
-        </div>
-        <div>
-            <br />
-            <InputText @bind-Value="@inputExample"></InputText>
-            <button @onclick="AddNewExanple">Add</button>
-        </div>
-    </div>
+<div class="d-flex justify-content-center " style="margin-bottom:70px;">   
+<button @onclick="TryCreateWord" class="btn btn-primary">Create new Word</button>
 </div>
-
-<button @onclick="TryCreateWord">Create new Word</button>
-<button @onclick="Go2Word3">Go2Word3</button>
 
 @code {
     public CreateWordDto Model { get; set; } = new();
@@ -135,10 +147,6 @@
         await createWordService.CreateWord(Model);
     }
 
-    public void Go2Word3()
-    {
-        navManager.NavigateTo("/word/en/3");
-    }
     private void AddNewDescription(MouseEventArgs e)
     {
         var text2Add = CheckText(inputDescription);

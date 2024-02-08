@@ -1,4 +1,4 @@
-﻿<div class="dropdown" @onmouseover="()=>OpenDropdown = true" @onmouseout="()=>OpenDropdown = false">
+﻿<div class="@($"{Classes} dropdown")" @onmouseover="()=>OpenDropdown = true" @onmouseout="()=>OpenDropdown = false">
     <a class="btn btn-secondary dropdown-toggle"
        href="#"
        role="button"
@@ -27,6 +27,7 @@
     public List<string> Options { get; set; }
     [Parameter]
     public EventCallback<string> OnClickEvent { get; set; }
-
+    [Parameter]
+    public string Classes { get; set; }
     bool OpenDropdown { get; set; }
 }

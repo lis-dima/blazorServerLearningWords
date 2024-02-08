@@ -1,5 +1,6 @@
 ﻿using lewBlazorServer.Data.Entities;
 using lewBlazorServer.Services.Audio;
+using Microsoft.CodeAnalysis.Options;
 
 namespace lewBlazorServer.Services.Helpers
 {
@@ -49,6 +50,11 @@ namespace lewBlazorServer.Services.Helpers
                     break;
             }
             return res;
+        }
+
+        public static Language LangFromStr(string langStr)
+        {
+            return (Language)Enum.Parse(typeof(Language), langStr);
         }
     }
 }

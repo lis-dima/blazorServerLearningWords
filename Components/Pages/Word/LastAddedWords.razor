@@ -6,30 +6,33 @@
 
 @rendermode InteractiveServer
 
-<h3>Last Added Words to system</h3>
-<ul>
-    @foreach (var word in Words)
-    {
-        <li>
-            <NavLink href="@($"word/en/{@word.Value}")">" @word.Value": </NavLink>
-            <AuthorizeView>
-                <Authorized>
-                    @{
-                        var isOnStudy = OnStudies.FirstOrDefault(d => d.WordId == word.Id) != null;
-                    }
-                    @if (isOnStudy)
-                    {
-                        <button @onclick="()=>RemoveOnStudy(word)">remove from onStudy</button>
-                    }
-                    else
-                    {
-                        <button @onclick="()=>AddOnStudy(word)">add onStudy</button>
-                    }
-                </Authorized>
-            </AuthorizeView>
-        </li>
-    }
-</ul>
+<PageTitle>Last Added Words</PageTitle>
+<div class="container">
+    <ul>
+        @foreach (var word in Words)
+        {
+            <li class="word-element m-1">
+                <NavLink href="@($"word/en/{@word.Value}")">@word.Value</NavLink>
+                <AuthorizeView>
+                    <Authorized>
+                        @{
+                            var isOnStudy = OnStudies.FirstOrDefault(d => d.WordId == word.Id) != null;
+                        }
+                        @if (isOnStudy)
+                        {
+                            <span class="is-on-study-makr">is studying</span>
+                            <button @onclick="()=>RemoveOnStudy(word)" class="btn btn-outline-danger">remove from onStudy</button>
+                        }
+                        else
+                        {
+                            <button @onclick="()=>AddOnStudy(word)" class="btn btn-outline-primary">add onStudy</button>
+                        }
+                    </Authorized>
+                </AuthorizeView>
+            </li>
+        }
+    </ul>
+</div>
 
 @code {
     List<Word> Words { get; set; } = new();

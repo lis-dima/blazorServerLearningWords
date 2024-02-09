@@ -1,70 +1,68 @@
 ﻿@page "/word/en/{UrlWord}"
 @inject WordController wordController
+@inject OnStudyService onStudyService
 @rendermode InteractiveServer
+<div class="container">
 
 <h2>@Word.Value</h2>
 [@Word.Transcription]
 @if (@Word.Id != 0)
 {
-    <audio controls>
-        <source src="@($"storages/global/{EnumConverter.TtsLang( Word.Language)}/Word/{Word.Id}.wav")" type="audio/wav">
-        Your browser does not support the audio element.
-    </audio>
+    <PlayAudio EntityId="Word.Id" lang="Word.Language" Type="EntityType.Word"></PlayAudio>
     <ul>
-
         @if (Word.Descriptions != null)
             @foreach (var item in Word.Descriptions)
             {
                 <li>
                     @item.Value
-                    <audio controls>
-                        <source src="@($"storages/global/{EnumConverter.TtsLang( item.Language)}/Description/{item.Id}.wav")" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
+                    <PlayAudio EntityId="item.Id" lang="item.Language" Type="EntityType.Description"></PlayAudio>
                 </li>
             }
     </ul>
     <ul>
-
         @if (Word.Translations != null)
             @foreach (var item in Word.Translations)
             {
                 <li>
                     @item.Value
-                    <audio controls>
-                        <source src="@($"storages/global/{EnumConverter.TtsLang( item.Language)}/Translation/{item.Id}.wav")" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
+                    <PlayAudio EntityId="item.Id" lang="item.Language" Type="EntityType.Translation"></PlayAudio>
                 </li>
             }
     </ul>
     <ul>
-
         @if (Word.Examples != null)
             @foreach (var item in Word.Examples)
             {
                 <li>
                     @item.Value
-                    <audio controls>
-                        <source src="@($"storages/global/{EnumConverter.TtsLang( item.Language)}/Example/{item.Id}.wav")" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
+                    <PlayAudio EntityId="item.Id" lang="item.Language" Type="EntityType.Example"></PlayAudio>
                 </li>
             }
     </ul>
-
-    <button>Add to studying</button>
-    <button>Remove from studying</button>
+    <AuthorizeView>
+        <Authorized>
+            @if (!IsWordOnStudy)
+            {
+                <button class="btn btn-outline-primary">Add to studying</button>
+            }
+            else
+            {
+                <button class="btn btn-outline-danger">Remove from studying</button>
+            }
+        </Authorized>
+    </AuthorizeView>
 }
 else
 {
     <span>Loading..</span>
 }
+</div>
 
 @code {
     [Parameter]
     public string UrlWord { get; set; }
     Word Word { get; set; } = new();
+    bool IsWordOnStudy { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -74,6 +72,8 @@ else
             if (responce.Ok)
             {
                 Word = responce.Data;
+                var resp = await (onStudyService.IsWordOnStudy(Word.Id));
+                if (resp.Ok) IsWordOnStudy = resp.Data;
             }
         }
     }

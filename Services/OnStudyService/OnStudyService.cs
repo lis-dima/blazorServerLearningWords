@@ -8,10 +8,12 @@ namespace lewBlazorServer.Services.OnStudyService
     public class OnStudyService
     {
         private readonly ApplicationDbContext context;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public OnStudyService(ApplicationDbContext context)
+        public OnStudyService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             this.context=context;
+            this.httpContextAccessor=httpContextAccessor;
         }
 
         public async Task<Response<OnStudy>> SetWordOnStudy(string userId, int wordId)
@@ -78,6 +80,15 @@ namespace lewBlazorServer.Services.OnStudyService
             }
             return resp;
         }
+
+        public async Task<Response<bool>> IsWordOnStudy(int wordId)
+        {
+            var resp = new Response<bool>();
+            var userId = httpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            resp.Data = context.OnStudies.Where(d => d.UserId == userId && d.WordId == wordId).FirstOrDefault() != null;
+            return resp;
+        }
+
 
         public async Task<Response<bool>> RemoveWordOnStudy(string userId, int wordId)
         {

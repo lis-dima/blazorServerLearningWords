@@ -1,0 +1,16 @@
+﻿.word-element:hover{
+    background-color: aliceblue;
+}
+
+.word-element:hover .btn {
+    opacity: 1;
+}
+
+.word-element .btn {
+    opacity: 0;
+    margin-left: 20px;
+}
+.is-on-study-makr{
+    margin-left:7px;
+}
+

@@ -1,0 +1,29 @@
+﻿@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
+<img src="/img/icons/play.png" @onclick="AudioPlay" attr-audio-id="@GetPath()" />
+<audio controls id="@GetPath()" class="d-none">
+    <source src="@GetPath()" type="audio/wav">
+    Your browser does not support the audio element.
+</audio>
+
+
+@code {
+    [Parameter]
+    public Language lang { get; set; }
+    [Parameter]
+    public EntityType Type { get; set; }
+    [Parameter]
+    public int EntityId { get; set; }
+
+    string GetPath()
+    {
+        return $"storages/global/{EnumConverter.TtsLang(lang)}/{Type}/{EntityId}.wav";
+    }
+
+    private void AudioPlay()
+    {
+        JSRuntime.InvokeVoidAsync("playAudio", $"storages/global/{EnumConverter.TtsLang(lang)}/{Type}/{EntityId}.wav");
+    }
+
+}

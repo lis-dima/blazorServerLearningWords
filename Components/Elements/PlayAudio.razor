@@ -2,15 +2,10 @@
 @inject IJSRuntime JSRuntime
 
 <img src="/img/icons/play.png" @onclick="AudioPlay" attr-audio-id="@GetPath()" />
-<audio controls id="@GetPath()" class="d-none">
-    <source src="@GetPath()" type="audio/wav">
-    Your browser does not support the audio element.
-</audio>
-
 
 @code {
     [Parameter]
-    public Language lang { get; set; }
+    public Language Lang { get; set; }
     [Parameter]
     public EntityType Type { get; set; }
     [Parameter]
@@ -18,12 +13,12 @@
 
     string GetPath()
     {
-        return $"storages/global/{EnumConverter.TtsLang(lang)}/{Type}/{EntityId}.wav";
+        return $"storages/global/{EnumConverter.TtsLang(Lang)}/{Type}/{EntityId}.wav";
     }
 
     private void AudioPlay()
     {
-        JSRuntime.InvokeVoidAsync("playAudio", $"storages/global/{EnumConverter.TtsLang(lang)}/{Type}/{EntityId}.wav");
+        JSRuntime.InvokeVoidAsync("playAudio", GetPath());
     }
 
 }

@@ -4,48 +4,52 @@
 @inject OnStudyService onStudyService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Onstudy Today</h3>
-<ul>
-    @foreach (var onStudy in OnStudies)
+<div class="container">
+    @if (OnStudies.Count > 0)
     {
-        var isFirstElement = OnStudies.First() == onStudy;
-        <li class='@(isFirstElement ? "":"d-none")'>
+        var onStudy = OnStudies.First();
+        <h3>Exercise: Flash Recall.</h3>
+        <div>
             <div>
-                <b>
-                    @onStudy.Word.Value
-                </b>
+                <p>
+                    <h4>@onStudy.Word.Value</h4>
+                    [@onStudy.Word.Transcription]
+                    <PlayAudio EntityId="@onStudy.Word.Id" Lang="@onStudy.Word.Language" Type="EntityType.Word"></PlayAudio>
+                </p>
                 <span class='@(ShowExamples ? "":"d-none")'>
-                    <hr>
                     <ul>
                         @foreach (var example in onStudy.Word.Examples)
                         {
-                            <ol>@example.Value</ol>
+                            <ol>
+                                <PlayAudio EntityId="@example.Id" Lang="@example.Language" Type="EntityType.Example"></PlayAudio>
+                                @example.Value
+                            </ol>
                         }
                     </ul>
-                    <hr>
                 </span>
                 <span class='@(ShowTranslations ? "":"d-none")'>
-                    <hr>
                     <ul>
                         @foreach (var translation in onStudy.Word.Translations)
                         {
-                            <ol>@translation.Value</ol>
+                            <ol>
+                                <PlayAudio EntityId="@translation.Id" Lang="@translation.Language" Type="EntityType.Translation"></PlayAudio>
+                                @translation.Value
+                            </ol>
                         }
                     </ul>
-                    <hr>
                 </span>
             </div>
             <div>
-                <button class='@(ShowExamples ? "d-none" : "")' @onclick="()=>ShowExamples = true">Show examples </button>
-                <button class='@(ShowTranslations ? "d-none" : "")' @onclick="()=>ShowTranslations = true">Show Translations </button>
+                <button class='btn btn-outline-info @(ShowExamples ? "d-none" : "")' @onclick="()=>ShowExamples = true">Show examples </button>
+                <button class='btn btn-outline-info @(ShowTranslations ? "d-none" : "")' @onclick="()=>ShowTranslations = true">Show Translations </button>
                 <hr>
-                <button @onclick="()=>HideOnStudy(onStudy)">Hide for now</button>
-                <button @onclick="()=>IncreaseOnStudyLvl(onStudy)">Increase onStudy lvl</button>
-                <button @onclick="()=>DecreaseOnStudyLvl(onStudy)">Decrease onStudy lvl</button>
+                <button @onclick="()=>HideOnStudy(onStudy)" class="btn btn-outline-secondary">Skip</button>
+                <button @onclick="()=>IncreaseOnStudyLvl(onStudy)" class="btn btn-outline-success">I remember this word</button>
+                <button @onclick="()=>DecreaseOnStudyLvl(onStudy)" class="btn btn-outline-warning">Temporarily hide this word</button>
             </div>
-        </li>
+        </div>
     }
-</ul>
+</div>
 
 @code {
 

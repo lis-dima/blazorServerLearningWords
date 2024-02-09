@@ -1,31 +1,25 @@
-﻿function playAudio(audioId) {
-    var audio = document.getElementById(audioId);
-    if (audio.paused) {
-        stopAllPlayingSounds();
+﻿/*
+it is necessary to use this concept because browser caching 
+does not allow playing the correct audio in some cases
+*/
+
+var lastAudioSrc = "";
+var audio = new Audio();
+audio.addEventListener("ended", function () {
+    document.querySelectorAll(`[attr-audio-id]`).forEach(i => i.src = "/img/icons/play.png");
+    lastAudioSrc = "";
+});
+function playAudio(audioId) {
+    document.querySelectorAll(`[attr-audio-id]`).forEach(i => i.src = "/img/icons/play.png");
+    audio.src = audioId;
+    if (lastAudioSrc != audioId) {
+        audio.play();
         var img = document.querySelector(`[attr-audio-id="${audioId}"]`);
         img.src = "/img/icons/pause.png";
-        if (audio) {
-            audio.play();
-            audio.addEventListener("ended", function () {
-                img.src = "/img/icons/play.png";
-            });
-        }
+        lastAudioSrc = audioId;
     } else {
-        PauseAudio(audioId);
+        lastAudioSrc = "";
+        audio.pause();
     }
-}
-
-function stopAllPlayingSounds() {
-    document.querySelectorAll('audio').forEach(function (audio) {
-        PauseAudio(audio.id);
-    });
-}
-
-function PauseAudio(audioId) {
-    var audio = document.getElementById(audioId);
-    var img = document.querySelector(`[attr-audio-id="${audio.id}"]`);
-    img.src = "/img/icons/play.png";
-    audio.pause();
-    audio.currentTime = 0;
 }
 

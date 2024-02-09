@@ -8,14 +8,14 @@
 [@Word.Transcription]
 @if (@Word.Id != 0)
 {
-    <PlayAudio EntityId="Word.Id" lang="Word.Language" Type="EntityType.Word"></PlayAudio>
+    <PlayAudio EntityId="Word.Id" Lang="Word.Language" Type="EntityType.Word"></PlayAudio>
     <ul>
         @if (Word.Descriptions != null)
             @foreach (var item in Word.Descriptions)
             {
                 <li>
                     @item.Value
-                    <PlayAudio EntityId="item.Id" lang="item.Language" Type="EntityType.Description"></PlayAudio>
+                    <PlayAudio EntityId="item.Id" Lang="item.Language" Type="EntityType.Description"></PlayAudio>
                 </li>
             }
     </ul>
@@ -25,7 +25,7 @@
             {
                 <li>
                     @item.Value
-                    <PlayAudio EntityId="item.Id" lang="item.Language" Type="EntityType.Translation"></PlayAudio>
+                    <PlayAudio EntityId="item.Id" Lang="item.Language" Type="EntityType.Translation"></PlayAudio>
                 </li>
             }
     </ul>
@@ -35,7 +35,7 @@
             {
                 <li>
                     @item.Value
-                    <PlayAudio EntityId="item.Id" lang="item.Language" Type="EntityType.Example"></PlayAudio>
+                    <PlayAudio EntityId="item.Id" Lang="item.Language" Type="EntityType.Example"></PlayAudio>
                 </li>
             }
     </ul>

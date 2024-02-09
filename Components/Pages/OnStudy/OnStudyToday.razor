@@ -3,13 +3,28 @@
 @inject OnStudyService onStudyService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Onstudy Today</h3>
-<ul>
-    @foreach (var onStudy in OnStudies)
-    {
-        <li>@onStudy.Word.Value</li>
-    }
-</ul>
+<div class="container">
+    <h3>On study Today</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Lvl</th>
+                <th scope="col">Word</th>
+                <th scope="col">Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var onStudy in OnStudies)
+            {
+                <tr class="align-middle">
+                    <th scope="row">@onStudy.Lvl</th>
+                    <td>@onStudy.Word.Value</td>
+                    <td><button @onclick="()=>RemoveOnStudy(onStudy.Word)" class="btn btn-outline-danger">remove</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
     private string userId = string.Empty;
@@ -28,6 +43,16 @@
             {
                 OnStudies = OnStudiesResp.Data;
             }
+        }
+
+    }
+
+    async Task RemoveOnStudy(Word word)
+    {
+        var res = await onStudyService.RemoveWordOnStudy(userId, word.Id);
+        if (res.Ok)
+        {
+            OnStudies.RemoveAll(os => os.WordId == word.Id);
         }
     }
 }

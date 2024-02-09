@@ -6,19 +6,20 @@
 
 @inject OnStudyService onStudyService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
-<h3>GetAudioArchive</h3>
-@if (!IsArchiveCreationProcess && !CanDownloadArchive)
-{
-    <button @onclick="GetFinelArchive">generate audio archive</button>
-}
-else if (IsArchiveCreationProcess)
-{
-    <span>Is in process...</span>
-} else if (CanDownloadArchive)
-{   
-<a href="@ArchivePath" download>Download .zip</a>
-}
+<div class="container">
+    <h3>Generate archive</h3>
+    @if (!IsArchiveCreationProcess && !CanDownloadArchive)
+    {
+        <button @onclick="GetFinelArchive" class="btn btn-success">generate audio archive</button>
+    }
+    else if (IsArchiveCreationProcess)
+    {
+        <span>Is in process...</span>
+    } else if (CanDownloadArchive)
+    {   
+        <a href="@ArchivePath" download>Download .zip</a>
+    }
+</div>
 
 @code {
     bool IsArchiveCreationProcess { get; set; }

@@ -1,15 +1,31 @@
 ﻿@page "/onstudy/all-words"
 
+@rendermode InteractiveServer
+
 @inject OnStudyService onStudyService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
-<h3>AllOnStudy</h3>
-<ul>
-    @foreach (var onStudy in OnStudies)
-    {
-        <li>@onStudy.Word.Value</li>
-    }
-</ul>
+<div class="container">
+    <h3>List of words you added for study</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Lvl</th>
+                <th scope="col">Word</th>
+                <th scope="col">Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var onStudy in OnStudies)
+            {
+                <tr class="align-middle">
+                    <th scope="row">@onStudy.Lvl</th>
+                    <td>@onStudy.Word.Value</td>
+                    <td><button @onclick="()=>RemoveOnStudy(onStudy.Word)" class="btn btn-outline-danger">remove</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
     private string userId = string.Empty;
@@ -23,11 +39,20 @@
         if (user.Identity.IsAuthenticated)
         {
             userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var OnStudiesResp = await onStudyService.GetWordsOnStudy(false, userId, 1, 100, new WordQueryRequest() );
+            var OnStudiesResp = await onStudyService.GetWordsOnStudy(false, userId, 1, 100, new WordQueryRequest());
             if (OnStudiesResp.Ok)
             {
                 OnStudies = OnStudiesResp.Data;
             }
+        }
+    }
+
+    async Task RemoveOnStudy(Word word)
+    {
+        var res = await onStudyService.RemoveWordOnStudy(userId, word.Id);
+        if (res.Ok)
+        {
+            OnStudies.RemoveAll(os => os.WordId == word.Id);
         }
     }
 }

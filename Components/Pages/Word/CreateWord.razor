@@ -107,24 +107,16 @@
     {
 
         Description d1 = new Description() { Value = "Description 1" };
-        Description d2 = new Description() { Value = "Description 2" };
-        Description d3 = new Description() { Value = "Description 3" };
 
         Translation t1 = new Translation() { Language = Language.Ru, Value = "Перевод 1 " };
-        Translation t2 = new Translation() { Language = Language.Ua, Value = "Переклад 2 " };
 
         Example e1 = new Example() { Value = "Example 1" };
-        Example e2 = new Example() { Value = "Example 2" };
 
         Model.Translations.Add(t1);
-        Model.Translations.Add(t2);
 
         Model.Descriptions.Add(d1);
-        Model.Descriptions.Add(d2);
-        Model.Descriptions.Add(d3);
 
         Model.Examples.Add(e1);
-        Model.Examples.Add(e2);
         return base.OnInitializedAsync();
     }
 

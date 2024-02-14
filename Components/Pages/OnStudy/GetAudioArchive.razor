@@ -56,15 +56,15 @@
         var example_1_Path = "";
         foreach (var os in OnStudies)
         {
-            wordAudioPath = Storage.GetAudioPath(Language.En, EntityType.Word, os.Word.Id, false );
+            wordAudioPath = Storage.GetAudioPath(EntityType.Word, os.Word.Id, false );
             var ruTranslations = os.Word.Translations.Where(t => t.Language == Language.Ru).ToList();
             if(ruTranslations.Count > 0)
             {
-                translationAudioPath = Storage.GetAudioPath(ruTranslations[0].Language, EntityType.Translation, ruTranslations[0].Id, false );
+                translationAudioPath = Storage.GetAudioPath(EntityType.Translation, ruTranslations[0].Id, false );
             }
             if(os.Word.Examples.Count > 0)
             {
-                example_1_Path = Storage.GetAudioPath(os.Word.Examples[0].Language, EntityType.Example, os.Word.Examples[0].Id, false );
+                example_1_Path = Storage.GetAudioPath(EntityType.Example, os.Word.Examples[0].Id, false );
             }
 
             var mergedName = os.Word.Value + "-en-" + ".wav";

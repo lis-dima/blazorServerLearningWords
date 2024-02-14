@@ -1,13 +1,12 @@
 ﻿<div class="@($"{Classes} dropdown")" @onmouseover="()=>OpenDropdown = true" @onmouseout="()=>OpenDropdown = false">
-    <a class="btn btn-secondary dropdown-toggle"
-       href="#"
+    <span class="btn btn-secondary dropdown-toggle"
        role="button"
        id="dropdownMenuLink"
        data-toggle="dropdown"
        aria-haspopup="true"
        aria-expanded="@OpenDropdown">
         @Title
-    </a>
+    </span>
 
     <div class="dropdown-menu @($"dropdown-menu {(OpenDropdown ? "show" : "")}")" aria-labelledby="dropdownMenuLink" @onclick="()=>OpenDropdown = false">
         @foreach (var option in Options)

@@ -66,9 +66,10 @@ namespace lewBlazorServer.Services.Audio
 
         public static async Task<bool> CreateAudio(CreateAudioDto createAudioDto)
         {
-            string path = Storage.GetAudioPath(createAudioDto.Lang, createAudioDto.Type, createAudioDto.TextId, true);
+            string path = Storage.GetAudioPath(createAudioDto.Type, createAudioDto.TextId, true);
             return await Text2Speach(createAudioDto.Lang.ToString(), createAudioDto.Text, path, EnumConverter.TtsSpeaker(createAudioDto.Speaker), 5);
         }
+        
     }
 
     // should use EnumConverter.TtsSpeaker(Speaker speaker)

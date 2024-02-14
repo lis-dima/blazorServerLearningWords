@@ -7,33 +7,84 @@
 @inject WordController wordController
 @inject NavigationManager navManager
 
-<h3>Edit</h3>
-<div class="d-flex" style="justify-content: space-evenly;">
+<div class="container">
+    <h3>Edit</h3>
+    <div class="d-flex" style="justify-content: space-evenly;">
 
-@if (Word.Descriptions != null)
-{
-    <ul>
+        @if (Word.Descriptions != null)
+        {
+            <ul>
 
-    @foreach (var desc in Word.Descriptions)
-    {
-        <li @onclick="()=>wordController.SetOnEdit((IWordChildEntity)desc)">@desc.Value</li>
-    }
-    </ul>
-}
-@if (Word.Examples != null)
-{
-    <ul>
+                @foreach (var desc in Word.Descriptions)
+                {
+                        <li class="pos-rel">
+                            <span @onclick="()=>wordController.SetOnEdit((IWordChildEntity)desc)">
+                                @desc.Value
+                            </span>
+                            <span @onclick="()=>RemoveChildEntity(desc.Id, desc.WordChildType)" class="remove-child-entity">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
+                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                                </svg>
+                            </span>
+                        </li>
+                }
+                <ol class="mt-3 p-0">
+                     <button @onclick="()=>CreateFirstEntity(EntityType.Description)" class=" btn btn-primary">Add new description</button>
+                </ol>
+            </ul>
+        }
+        @if (Word.Translations != null)
+        {
+            <ul>
 
-    @foreach (var item in Word.Examples)
-    {
-        <li @onclick="()=>wordController.SetOnEdit((IWordChildEntity)item)">@item.Value</li>
-    }
-    </ul>
-}
+                @foreach (var elem in Word.Translations)
+                {                
+                    <li @onclick="()=>wordController.SetOnEdit((IWordChildEntity)elem)" class="pos-rel">
+                        <span>
+                            @elem.Value
+                        </span>
+                        <span @onclick="()=>RemoveChildEntity(elem.Id, elem.WordChildType)" class="remove-child-entity">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                            </svg>
+                        </span>
+                    </li>  
+                }
+                <ol class="mt-3 p-0">
+                    <button @onclick="()=>CreateFirstEntity(EntityType.Translation)" class=" btn btn-primary">Add new translations</button>
+                </ol>
+            </ul>
+        }
+        @if (Word.Examples != null)
+        {
+            <ul>
+
+                @foreach (var elem in Word.Examples)
+                {
+                    <li @onclick="()=>wordController.SetOnEdit((IWordChildEntity)elem)" class="pos-rel">
+                        <span>
+                            @elem.Value
+                        </span>
+                            <span @onclick="()=>RemoveChildEntity(elem.Id, elem.WordChildType)" class="remove-child-entity">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
+                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                                </svg>
+                            </span>
+                    </li>
+                }
+                <ol class="mt-3 p-0">
+                    <button @onclick="()=>CreateFirstEntity(EntityType.Example)" class=" btn btn-primary">Add new examples</button>
+                </ol>
+            </ul>
+        }
+    </div>
+
+    <hr />
+    <lewBlazorServer.Components.Elements.FormChildEntity ShowLanguageControll="true"></lewBlazorServer.Components.Elements.FormChildEntity>
 </div>
-
-<hr />
-<lewBlazorServer.Components.Elements.FormChildEntity></lewBlazorServer.Components.Elements.FormChildEntity>
 
 
 @code {
@@ -45,6 +96,11 @@
     {
         wordController.OnAfterWordChanged += handler_OnAfterWordChanged;
         return base.OnInitializedAsync();
+    }
+    
+    void IDisposable.Dispose()
+    {
+        wordController.OnAfterWordChanged -= handler_OnAfterWordChanged;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -64,8 +120,43 @@
         StateHasChanged();
     }
 
-    void IDisposable.Dispose()
+    void CreateFirstEntity(EntityType entityType)
     {
-        wordController.OnAfterWordChanged -= handler_OnAfterWordChanged;
+        if(entityType == EntityType.Example)
+        {
+            var newExample = new Example() { Value = "", WordId = Word.Id};
+            Word.Examples.Add(newExample);
+            wordController.SetOnEdit(newExample);
+        }
+        else if (entityType == EntityType.Description)
+        {
+            var newDescription = new Description() { Value = "", WordId = Word.Id };
+            Word.Descriptions.Add(newDescription);
+            wordController.SetOnEdit(newDescription);
+        }
+        else if (entityType == EntityType.Translation)
+        {
+            var newTranslation = new Translation() { Value = "", WordId = Word.Id, Language = Language.Ru };
+            Word.Translations.Add(newTranslation);
+            wordController.SetOnEdit(newTranslation);
+        }
+        Word.Examples.RemoveAll(d => d.Value == "");
+        Word.Descriptions.RemoveAll(d => d.Value == "");
+        Word.Translations.RemoveAll(d => d.Value == "");
+    }
+
+    async Task RemoveChildEntity(int entityId, EntityType type)
+    {
+        var isSuccessful = await wordController.DeleteChildEntity(entityId, type);
+        if (isSuccessful)
+        {
+            if(type == EntityType.Translation)
+                Word.Translations.RemoveAll(d => d.Id == entityId);
+            else  if(type == EntityType.Example)
+                Word.Examples.RemoveAll(d => d.Id == entityId);
+            else  if(type == EntityType.Description)
+                Word.Descriptions.RemoveAll(d => d.Id == entityId);
+            wordController.SetOnEdit(null);
+        }
     }
 }

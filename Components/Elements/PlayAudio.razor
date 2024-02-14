@@ -5,15 +5,13 @@
 
 @code {
     [Parameter]
-    public Language Lang { get; set; }
-    [Parameter]
     public EntityType Type { get; set; }
     [Parameter]
     public int EntityId { get; set; }
 
     string GetPath()
     {
-        return $"storages/global/{EnumConverter.TtsLang(Lang)}/{Type}/{EntityId}.wav";
+        return Storage.LocalPath2Web(Storage.GetAudioPath(Type, EntityId, false));
     }
 
     private void AudioPlay()

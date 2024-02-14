@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using lewBlazorServer.Data.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace lewBlazorServer.Data.Entities
 {
-    public class Translation
+    public class Translation : IWordChildEntity
     {
         public int Id { get; set; }
         public Language Language { get; set; } = Language.En;
@@ -11,5 +12,6 @@ namespace lewBlazorServer.Data.Entities
         public int WordId { get; set; }
         [JsonIgnore]
         public Word Word { get; set; }
+        public EntityType WordChildType { get; set; } = EntityType.Translation;
     }
 }

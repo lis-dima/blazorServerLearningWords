@@ -115,6 +115,21 @@ namespace lewBlazorServer.Services.WordService
             return resp;
         }
 
+        public async Task<Response<Translation>> UpdateWordTranslation(int id, string value)
+        {
+            var resp = new Response<Translation>();
+            var desc = await context.Translations.FirstOrDefaultAsync(t => t.Id == id);
+            if (desc == null)
+            {
+                resp.Errors.Add(new("no such translation with id: " + id));
+                return resp;
+            }
+            desc.Value = value;
+            await context.SaveChangesAsync();
+            resp.Data = desc;
+            return resp;
+        }
+
         public async Task<Response<List<Word>>> LastAddedWords(int page, int perPage)
         {
             int skipCount = (page - 1) * perPage;
@@ -127,6 +142,45 @@ namespace lewBlazorServer.Services.WordService
             var resp = new Response<List<Word>>();
             resp.Data = words;
             return resp;
+        }
+
+        public async Task<Response<bool>> DeleteExample(int id)
+        {
+            var respond = new Response<bool>();
+            var entity = await context.Examples.FindAsync(id);
+            if (entity != null)
+            {
+                respond.Data = true;
+                context.Examples.Remove(entity);
+                await context.SaveChangesAsync();
+            }
+            return respond;
+        }
+
+        public async Task<Response<bool>> DeleteTranslation(int id)
+        {
+            var respond = new Response<bool>();
+            var entity = await context.Translations.FindAsync(id);
+            if (entity != null)
+            {
+                respond.Data = true;
+                context.Translations.Remove(entity);
+                await context.SaveChangesAsync();
+            }
+            return respond;
+        }
+
+        public async Task<Response<bool>> DeleteDescription(int id)
+        {
+            var respond = new Response<bool>();
+            var entity = await context.Descriptions.FindAsync(id);
+            if (entity != null)
+            {
+                respond.Data = true;
+                context.Descriptions.Remove(entity);
+                await context.SaveChangesAsync();
+            }
+            return respond;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace lewBlazorServer.Controllers
             return resp;
         }
 
-        private async Task<Services.Response<Translation>> CreateWordTranslation(string value, Language language, int wordId)
+        public async Task<Services.Response<Translation>> CreateWordTranslation(string value, Language language, int wordId)
         {
             var response = new Services.Response<Translation>();
             var result = await wordService.CreateTranslation4Word(value, language, wordId);
@@ -68,7 +68,7 @@ namespace lewBlazorServer.Controllers
             return response;
         }
 
-        private async Task<Services.Response<Description>> CreateWordDescription(string value, Language language, int wordId)
+        public async Task<Services.Response<Description>> CreateWordDescription(string value, Language language, int wordId)
         {
             var response = new Services.Response<Description>();
             var result = await wordService.CreateDescription4Word(value, language, wordId);
@@ -81,7 +81,7 @@ namespace lewBlazorServer.Controllers
             return response;
         }
 
-        private async Task<Services.Response<Example>> CreateWordExample(string value, Language language, int wordId)
+        public async Task<Services.Response<Example>> CreateWordExample(string value, Language language, int wordId)
         {
             var response = new Services.Response<Example>();
             var result = await wordService.CreateExample4Word(value, language, wordId);
@@ -106,7 +106,7 @@ namespace lewBlazorServer.Controllers
 
         public async Task<List<Word>> LastAddedWords(int page, int perPage)
         {
-            return ( await wordService.LastAddedWords(page, perPage)).Data;
+            return (await wordService.LastAddedWords(page, perPage)).Data;
         }
 
         public void SetOnEdit(IWordChildEntity wordChildEntity)
@@ -132,6 +132,66 @@ namespace lewBlazorServer.Controllers
                     OnAfterWordChanged?.Invoke((await GetWord(editedChildEntity.WordId)).Data);
                 }
             }
+            else if (editedChildEntity.WordChildType == EntityType.Translation)
+            {
+                var resp = await wordService.UpdateWordTranslation(editedChildEntity.Id, editedChildEntity.Value);
+                if (resp.Ok)
+                {
+                    OnAfterWordChanged?.Invoke((await GetWord(editedChildEntity.WordId)).Data);
+                }
+            }
+        }
+
+        public async Task UpdateOrCreateChildEntity(IWordChildEntity editedChildEntity)
+        {
+            List<Error> errors = new List<Error>();
+            if (editedChildEntity.WordChildType == EntityType.Translation)
+            {
+                errors = (await wordService.UpdateWordTranslation(editedChildEntity.Id, editedChildEntity.Value)).Errors;
+            }
+            else if (editedChildEntity.WordChildType == EntityType.Description)
+            {
+                errors = (await wordService.UpdateWordDescription(editedChildEntity.Id, editedChildEntity.Value)).Errors;
+            }
+            else if (editedChildEntity.WordChildType == EntityType.Example)
+            {
+                errors = (await wordService.UpdateWordExample(editedChildEntity.Id, editedChildEntity.Value)).Errors;
+            }
+
+            if (errors.Count == 0)
+            {
+                await CreateAudioTTS.CreateAudio(new(editedChildEntity));
+            }
+            else if (errors.Count == 1 && errors[0].Message.Contains("no such "))
+            {
+                if (editedChildEntity.WordChildType == EntityType.Translation)
+                    await CreateWordTranslation(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);
+                else if (editedChildEntity.WordChildType == EntityType.Description)
+                    await CreateWordDescription(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);
+                else if (editedChildEntity.WordChildType == EntityType.Example)
+                    await CreateWordExample(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);
+            }
+        }
+    
+        public async Task<bool> DeleteChildEntity(int entityId, EntityType type)
+        {
+            var successful = false ;
+            if (type == EntityType.Translation)
+            {
+                var r = await wordService.DeleteTranslation(entityId);
+                successful = r.Data;
+            }
+            else if (type == EntityType.Example)
+            {
+                var r = await wordService.DeleteExample(entityId);
+                successful = r.Data;
+            }
+            else if (type == EntityType.Description)
+            {
+                var r = await wordService.DeleteDescription(entityId);
+                successful = r.Data;
+            }
+            return successful;
         }
     }
 }

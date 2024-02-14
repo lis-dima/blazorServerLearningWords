@@ -8,6 +8,7 @@ namespace lewBlazorServer.Data.Interfaces
         public string Value { get; set; }
         public int WordId { get; set; }
         public EntityType WordChildType { get; set; }
+        public Language Language { get; set; }
     }
 
 

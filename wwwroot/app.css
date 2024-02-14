@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 h1:focus {
     outline: none;
 }
@@ -33,8 +37,8 @@ h1:focus {
     border-color: #929292;
 }
 
-.d-flex{
-    display:flex;
+.d-flex {
+    display: flex;
 }
 
 .f-row {
@@ -47,10 +51,26 @@ h1:focus {
     flex-direction: column;
 }
 
-.d-none{
+.d-none {
     display: none !important;
 }
 
 .jc-sb {
     justify-content: space-between;
+}
+
+.is-in-progress,
+.is-in-progress * {
+    opacity: 0.7 !important;
+    cursor: progress !important;
+}
+
+.pos-rel {
+    position: relative;
+}
+
+.remove-child-entity {
+    position: absolute;
+    right: -15px;
+    top: 0px;
 }

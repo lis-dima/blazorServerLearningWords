@@ -12,6 +12,11 @@ namespace lewBlazorServer.Services.WordService
         Task<Response<Word>> GetWord(string word, Language translationLang);
         Task<Response<Example>> UpdateWordExample(int id, string value);
         Task<Response<Description>> UpdateWordDescription(int id, string value);
+        Task<Response<Translation>> UpdateWordTranslation(int id, string value);
         Task<Response<List<Word>>> LastAddedWords(int page, int perPage);
+        Task<Response<bool>> DeleteExample(int id);
+        Task<Response<bool>> DeleteTranslation(int id);
+        Task<Response<bool>> DeleteDescription(int id);
+
     }
 }

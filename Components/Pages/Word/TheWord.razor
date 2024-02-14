@@ -3,59 +3,67 @@
 @inject OnStudyService onStudyService
 @rendermode InteractiveServer
 <div class="container">
-
-<h2>@Word.Value</h2>
-[@Word.Transcription]
-@if (@Word.Id != 0)
-{
-    <PlayAudio EntityId="Word.Id" Lang="Word.Language" Type="EntityType.Word"></PlayAudio>
-    <ul>
-        @if (Word.Descriptions != null)
-            @foreach (var item in Word.Descriptions)
-            {
-                <li>
-                    @item.Value
-                    <PlayAudio EntityId="item.Id" Lang="item.Language" Type="EntityType.Description"></PlayAudio>
-                </li>
-            }
-    </ul>
-    <ul>
-        @if (Word.Translations != null)
-            @foreach (var item in Word.Translations)
-            {
-                <li>
-                    @item.Value
-                    <PlayAudio EntityId="item.Id" Lang="item.Language" Type="EntityType.Translation"></PlayAudio>
-                </li>
-            }
-    </ul>
-    <ul>
-        @if (Word.Examples != null)
-            @foreach (var item in Word.Examples)
-            {
-                <li>
-                    @item.Value
-                    <PlayAudio EntityId="item.Id" Lang="item.Language" Type="EntityType.Example"></PlayAudio>
-                </li>
-            }
-    </ul>
-    <AuthorizeView>
-        <Authorized>
-            @if (!IsWordOnStudy)
-            {
-                <button class="btn btn-outline-primary">Add to studying</button>
-            }
-            else
-            {
-                <button class="btn btn-outline-danger">Remove from studying</button>
-            }
-        </Authorized>
-    </AuthorizeView>
-}
-else
-{
-    <span>Loading..</span>
-}
+    <div class="d-flex">
+        <h2 style="display: inline-block;">@Word.Value</h2>
+        <AuthorizeView>
+            <Authorized>
+                <NavLink class="mx-2" href="@($"word/edit/en/{UrlWord}")" style="margin: auto 0">
+                    edit
+                </NavLink>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+    [@Word.Transcription]
+    @if (@Word.Id != 0)
+    {
+        <PlayAudio EntityId="Word.Id" Type="EntityType.Word"></PlayAudio>
+        <ul>
+            @if (Word.Descriptions != null)
+                @foreach (var item in Word.Descriptions)
+                {
+                    <li>
+                        @item.Value
+                        <PlayAudio EntityId="item.Id" Type="EntityType.Description"></PlayAudio>
+                    </li>
+                }
+        </ul>
+        <ul>
+            @if (Word.Translations != null)
+                @foreach (var item in Word.Translations)
+                {
+                    <li>
+                        @item.Value
+                        <PlayAudio EntityId="item.Id" Type="EntityType.Translation"></PlayAudio>
+                    </li>
+                }
+        </ul>
+        <ul>
+            @if (Word.Examples != null)
+                @foreach (var item in Word.Examples)
+                {
+                    <li>
+                        @item.Value
+                        <PlayAudio EntityId="item.Id" Type="EntityType.Example"></PlayAudio>
+                    </li>
+                }
+        </ul>
+        <AuthorizeView>
+            <Authorized>
+                @if (!IsWordOnStudy)
+                {
+                    <button class="btn btn-outline-primary">Add to studying</button>
+                }
+                else
+                {
+                    <button class="btn btn-outline-danger">Remove from studying</button>
+                }
+            </Authorized>
+        </AuthorizeView>
+    }
+    else
+    {
+        <span>Loading..</span>
+    }
 </div>
 
 @code {

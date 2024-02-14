@@ -10,12 +10,12 @@ namespace lewBlazorServer.Services.Helpers
 {
     public class Storage
     {
-        public static bool HasAudio(Language langPronunciation, EntityType type, int id)
+        public static bool HasAudio(EntityType type, int id)
         {
-            return File.Exists(GetAudioPath(langPronunciation, type, id, false));
+            return File.Exists(GetAudioPath(type, id, false));
         }
 
-        public static string GetAudioPath(Language lang, EntityType type, int id, bool createFolder)
+        public static string GetAudioPath(EntityType type, int id, bool createFolder)
         {
             //var fileName = AppropriateFileName(text);
             var path = Path.Combine(new string[] {
@@ -23,7 +23,6 @@ namespace lewBlazorServer.Services.Helpers
                 "wwwroot",
                 "storages",
                 "global",
-                EnumConverter.TtsLang(lang),
                 type.ToString(),
                 id + ".wav"
             });

@@ -1,17 +1,29 @@
 ﻿@rendermode InteractiveServer
 
 @inject WordController wordController
+@inject NavigationManager navManager
 @implements IDisposable
 
 @if (Element2Edit !=null)
 {
-    <EditForm Model="Element2Edit" FormName="editIWordChildEntity">
-        @Element2Edit?.Value
-        <InputText @bind-Value="@Element2Edit.Value"></InputText>
+    <EditForm Model="Element2Edit" FormName="editIWordChildEntity" class="@(IsInProcess? " is-in-progress " : " ")">
+            <InputText @bind-Value="@Element2Edit.Value" class="form-control col-6 col-auto"></InputText>
+        <div class="d-flex my-3 justify-content-end ">
+            @if (ShowLanguageControll)
+            {
+                <Dropdown Title="@Element2Edit.Language.ToString()"
+                          Options="@(Enum.GetNames(typeof(Language)).ToList())"
+                          OnClickEvent="@(option => Element2Edit.Language = EnumConverter.LangFromStr(option))"
+                          Classes="mx-2" />
+            }
+            <button @onclick="UpdateHandler" class="btn btn-outline-success x-left-2">Update</button>
+        </div>
     </EditForm>
-    <button @onclick="UpdateHandler">Update</button>
 }
 @code {
+    [Parameter]
+    public bool ShowLanguageControll { get; set; } = false;
+    public bool IsInProcess { get; set; }
     IWordChildEntity Element2Edit { get; set; }
 
     protected override void OnInitialized()
@@ -32,7 +44,12 @@
 
     async Task UpdateHandler()
     {
-        await wordController.UpdateWordChildEntity(Element2Edit);
+        if (IsInProcess) return;
+        IsInProcess = true;
+        await wordController.UpdateOrCreateChildEntity(Element2Edit);
+        IsInProcess = false;
+        navManager.Refresh(true);
+        return;
     }
 
 }

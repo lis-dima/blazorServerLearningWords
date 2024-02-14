@@ -182,5 +182,18 @@ namespace lewBlazorServer.Services.WordService
             }
             return respond;
         }
+
+        public async Task<Response<bool>> DeleteWord(int id)
+        {
+            var respond = new Response<bool>();
+            var entity = await context.Words.FindAsync(id);
+            if (entity != null)
+            {
+                respond.Data = true;
+                context.Words.Remove(entity);
+                await context.SaveChangesAsync();
+            }
+            return respond;
+        }
     }
 }

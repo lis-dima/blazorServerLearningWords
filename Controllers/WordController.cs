@@ -193,5 +193,12 @@ namespace lewBlazorServer.Controllers
             }
             return successful;
         }
+
+        public async Task DeleteWord(int id)
+        {
+            await wordService.DeleteWord(id);
+        }
+
+
     }
 }

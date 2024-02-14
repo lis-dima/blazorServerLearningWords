@@ -1,5 +1,6 @@
 ﻿using lewBlazorServer.Data.Entities;
 using lewBlazorServer.Data.Interfaces;
+using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.CognitiveServices.Speech.Transcription;
 using System.Data.SqlTypes;
 using System.IO;
@@ -13,6 +14,12 @@ namespace lewBlazorServer.Services.Helpers
         public static bool HasAudio(EntityType type, int id)
         {
             return File.Exists(GetAudioPath(type, id, false));
+        }
+
+        public static void DeleteAudio(string path)
+        {
+            if(File.Exists(path))
+                File.Delete(path);
         }
 
         public static string GetAudioPath(EntityType type, int id, bool createFolder)

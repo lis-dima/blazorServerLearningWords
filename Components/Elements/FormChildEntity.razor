@@ -24,7 +24,7 @@
     [Parameter]
     public bool ShowLanguageControll { get; set; } = false;
     public bool IsInProcess { get; set; }
-    IWordChildEntity Element2Edit { get; set; }
+    IRecordEntity Element2Edit { get; set; }
 
     protected override void OnInitialized()
     {
@@ -36,7 +36,7 @@
         wordController.OnSetOnEditWordChildEntity -= handler_OnSetOnEditWordChildEntity;
     }
 
-    void handler_OnSetOnEditWordChildEntity(IWordChildEntity element)
+    void handler_OnSetOnEditWordChildEntity(IRecordEntity element)
     {
         Element2Edit = element;
         StateHasChanged();

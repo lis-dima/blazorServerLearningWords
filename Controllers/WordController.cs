@@ -18,7 +18,7 @@ namespace lewBlazorServer.Controllers
     public class WordController
     {
         public event Action<Word> OnAfterWordChanged;
-        public event Action<IWordChildEntity> OnSetOnEditWordChildEntity;
+        public event Action<IRecordEntity> OnSetOnEditWordChildEntity;
         private readonly IWordService wordService;
 
         public WordController(IWordService wordService)
@@ -109,14 +109,14 @@ namespace lewBlazorServer.Controllers
             return (await wordService.LastAddedWords(page, perPage)).Data;
         }
 
-        public void SetOnEdit(IWordChildEntity wordChildEntity)
+        public void SetOnEdit(IRecordEntity wordChildEntity)
         {
             OnSetOnEditWordChildEntity?.Invoke(wordChildEntity);
         }
 
-        public async Task UpdateWordChildEntity(IWordChildEntity editedChildEntity)
+        public async Task UpdateWordChildEntity(IRecordEntity editedChildEntity)
         {
-            if (editedChildEntity.WordChildType == EntityType.Example)
+            if (editedChildEntity.Type == EntityType.Example)
             {
                 var resp = await wordService.UpdateWordExample(editedChildEntity.Id, editedChildEntity.Value);
                 if (resp.Ok)
@@ -124,7 +124,7 @@ namespace lewBlazorServer.Controllers
                     OnAfterWordChanged?.Invoke((await GetWord(editedChildEntity.WordId)).Data);
                 }
             }
-            else if (editedChildEntity.WordChildType == EntityType.Description)
+            else if (editedChildEntity.Type == EntityType.Description)
             {
                 var resp = await wordService.UpdateWordDescription(editedChildEntity.Id, editedChildEntity.Value);
                 if (resp.Ok)
@@ -132,7 +132,7 @@ namespace lewBlazorServer.Controllers
                     OnAfterWordChanged?.Invoke((await GetWord(editedChildEntity.WordId)).Data);
                 }
             }
-            else if (editedChildEntity.WordChildType == EntityType.Translation)
+            else if (editedChildEntity.Type == EntityType.Translation)
             {
                 var resp = await wordService.UpdateWordTranslation(editedChildEntity.Id, editedChildEntity.Value);
                 if (resp.Ok)
@@ -142,18 +142,18 @@ namespace lewBlazorServer.Controllers
             }
         }
 
-        public async Task UpdateOrCreateChildEntity(IWordChildEntity editedChildEntity)
+        public async Task UpdateOrCreateChildEntity(IRecordEntity editedChildEntity)
         {
             List<Error> errors = new List<Error>();
-            if (editedChildEntity.WordChildType == EntityType.Translation)
+            if (editedChildEntity.Type == EntityType.Translation)
             {
                 errors = (await wordService.UpdateWordTranslation(editedChildEntity.Id, editedChildEntity.Value)).Errors;
             }
-            else if (editedChildEntity.WordChildType == EntityType.Description)
+            else if (editedChildEntity.Type == EntityType.Description)
             {
                 errors = (await wordService.UpdateWordDescription(editedChildEntity.Id, editedChildEntity.Value)).Errors;
             }
-            else if (editedChildEntity.WordChildType == EntityType.Example)
+            else if (editedChildEntity.Type == EntityType.Example)
             {
                 errors = (await wordService.UpdateWordExample(editedChildEntity.Id, editedChildEntity.Value)).Errors;
             }
@@ -164,11 +164,11 @@ namespace lewBlazorServer.Controllers
             }
             else if (errors.Count == 1 && errors[0].Message.Contains("no such "))
             {
-                if (editedChildEntity.WordChildType == EntityType.Translation)
+                if (editedChildEntity.Type == EntityType.Translation)
                     await CreateWordTranslation(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);
-                else if (editedChildEntity.WordChildType == EntityType.Description)
+                else if (editedChildEntity.Type == EntityType.Description)
                     await CreateWordDescription(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);
-                else if (editedChildEntity.WordChildType == EntityType.Example)
+                else if (editedChildEntity.Type == EntityType.Example)
                     await CreateWordExample(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);
             }
         }

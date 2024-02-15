@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace lewBlazorServer.Data.Entities
 {
-    public class Example : IWordChildEntity
+    public class Example : IRecordEntity
     {
         public int Id { get; set; }
         public Language Language { get; set; } = Language.En;
@@ -14,6 +14,6 @@ namespace lewBlazorServer.Data.Entities
         [JsonIgnore]
         public Word Word { get; set; }
         [NotMapped]
-        public EntityType WordChildType { get; set; } = EntityType.Example;
+        public EntityType Type { get; set; } = EntityType.Example;
     }
 }

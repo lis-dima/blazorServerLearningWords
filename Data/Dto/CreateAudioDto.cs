@@ -48,9 +48,9 @@ namespace lewBlazorServer.Data.Dto
             Speaker = EnumConverter.TtsSpeaker(Lang);
         }
 
-        public CreateAudioDto(IWordChildEntity data)
+        public CreateAudioDto(IRecordEntity data)
         {
-            Type = data.WordChildType;
+            Type = data.Type;
             Text = data.Value;
             TextId = data.Id;
             Lang = data.Language;

@@ -54,9 +54,9 @@ namespace lewBlazorServer.Data
                     case Word word:
                         Storage.DeleteAudio(Storage.GetAudioPath(EntityType.Word, word.Id, false));
                         break;
-                    case IWordChildEntity iWordChildEntity:
+                    case IRecordEntity iWordChildEntity:
                         // Example, Description, Translation
-                        Storage.DeleteAudio(Storage.GetAudioPath(iWordChildEntity.WordChildType, iWordChildEntity.Id, false));
+                        Storage.DeleteAudio(Storage.GetAudioPath(iWordChildEntity.Type, iWordChildEntity.Id, false));
                         break;
                 }
             }

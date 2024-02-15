@@ -64,7 +64,7 @@ namespace lewBlazorServer.Services.WordService
                 .Include(w => w.Examples)
                 .FirstOrDefaultAsync(w => w.Id == wordId);
             if (w == null)
-                resp.Errors.Add(new Error("no such word"));
+                resp.Errors.Add(new(ErrorCode.NotFound, $"No such word with id ({wordId})"));
             resp.Data = w;
             return resp;
         }
@@ -79,7 +79,7 @@ namespace lewBlazorServer.Services.WordService
                 .Include(w => w.Examples)
                 .FirstOrDefaultAsync(w => w.Value == word);
             if (w == null)
-                resp.Errors.Add(new Error("no such word"));
+                resp.Errors.Add(new(ErrorCode.NotFound, $"No such word ({word})"));
             resp.Data = w;
             return resp;
         }
@@ -90,7 +90,7 @@ namespace lewBlazorServer.Services.WordService
             var example = await context.Examples.FirstOrDefaultAsync(t => t.Id == id);
             if (example == null)
             {
-                resp.Errors.Add(new("no such example with id: " + id));
+                resp.Errors.Add(new(ErrorCode.NotFound, $"No such example with id ({id})"));
                 return resp;
             }
             example.Value = value;
@@ -106,7 +106,7 @@ namespace lewBlazorServer.Services.WordService
             var desc = await context.Descriptions.FirstOrDefaultAsync(t => t.Id == id);
             if (desc == null)
             {
-                resp.Errors.Add(new("no such example with id: " + id));
+                resp.Errors.Add(new(ErrorCode.NotFound, $"No such description with id ({id})"));
                 return resp;
             }
             desc.Value = value;
@@ -121,7 +121,7 @@ namespace lewBlazorServer.Services.WordService
             var desc = await context.Translations.FirstOrDefaultAsync(t => t.Id == id);
             if (desc == null)
             {
-                resp.Errors.Add(new("no such translation with id: " + id));
+                resp.Errors.Add(new(ErrorCode.NotFound, $"No such translation with id ({id})"));
                 return resp;
             }
             desc.Value = value;

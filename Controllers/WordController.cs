@@ -162,7 +162,7 @@ namespace lewBlazorServer.Controllers
             {
                 await CreateAudioTTS.CreateAudio(new(editedChildEntity));
             }
-            else if (errors.Count == 1 && errors[0].Message.Contains("no such "))
+            else if (errors.Count == 1 && errors[0].Code == ErrorCode.NotFound)
             {
                 if (editedChildEntity.Type == EntityType.Translation)
                     await CreateWordTranslation(editedChildEntity.Value, editedChildEntity.Language, editedChildEntity.WordId);

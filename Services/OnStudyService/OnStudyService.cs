@@ -21,7 +21,7 @@ namespace lewBlazorServer.Services.OnStudyService
             var resp = new Response<OnStudy>();
             if ((await GetWordOnStudy(userId, wordId)).Ok)
             {
-                resp.Errors.Add(new("this word is already in onStudy list"));
+                resp.Errors.Add(new( ErrorCode.AlreadyExist, $"The word with id ({wordId}) is already in on study"));
             }
             else
             {
@@ -76,7 +76,7 @@ namespace lewBlazorServer.Services.OnStudyService
             resp.Data = context.OnStudies.Where(d => d.UserId == userId && d.WordId == wordId).FirstOrDefault();
             if (resp.Data == null)
             {
-                resp.Errors.Add(new("No such onStudy"));
+                resp.Errors.Add(new( ErrorCode.NotFound, "No such word on study"));
             }
             return resp;
         }
@@ -96,7 +96,7 @@ namespace lewBlazorServer.Services.OnStudyService
             var onStudyResp = await GetWordOnStudy(userId, wordId);
             if (!onStudyResp.Ok)
             {
-                resp.Errors.Add(new("No such onStudy"));
+                resp.Errors.Add(new(ErrorCode.NotFound, "No such word on study"));
             }
             else
             {

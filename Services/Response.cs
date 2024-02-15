@@ -9,11 +9,23 @@
 
     public class Error
     {
-
+        public ErrorCode Code { get; set; } = ErrorCode.NotSet;
         public string Message { get; set; }
-        public Error(string message)
+        public Error(string message) : this(ErrorCode.NotSet, message)
         {
+        }
+
+        public Error(ErrorCode code, string message)
+        {
+            Code = code;
             Message = message;
         }
+    }
+
+    public enum ErrorCode
+    {
+        NotSet,
+        NotFound,
+        AlreadyExist
     }
 }

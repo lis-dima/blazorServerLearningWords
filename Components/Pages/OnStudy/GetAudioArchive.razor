@@ -80,7 +80,7 @@
         string[] filePaths = Directory.GetFiles(path4MergedFolder);
 
         var userDailyFolderArchive = Storage.GetUserArchivepath(userId);
-        lewBlazorServer.Services.MergeAudios.MergeAudios.CreateAudioArchiveFromFilesPaths(filePaths, userDailyFolderArchive);
+        lewBlazorServer.Services.MergeAudios.MergeAudios.CreateAudioArchiveFromFilePaths(filePaths, userDailyFolderArchive);
         CanDownloadArchive = true;
         IsArchiveCreationProcess = false;
     }

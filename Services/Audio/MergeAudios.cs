@@ -4,9 +4,9 @@ using System.IO.Compression;
 
 namespace lewBlazorServer.Services.MergeAudios
 {
-    public class MergeAudios
+    public static class MergeAudios
     {
-        public static void Merge(string[] merge, string outputPath) // outputPath .zip
+        public static void Merge(string[] filePaths2Merge, string outputPath) // outputPath .zip
         {
             //ChangeSeparator();
             //return;
@@ -18,7 +18,7 @@ namespace lewBlazorServer.Services.MergeAudios
             });
             List<AudioFileReader> afrs = new List<AudioFileReader>();
             afrs.Add(new AudioFileReader(separator));
-            foreach (var f in merge)
+            foreach (var f in filePaths2Merge)
             {
                 afrs.Add(new AudioFileReader(f));
             }
@@ -31,7 +31,7 @@ namespace lewBlazorServer.Services.MergeAudios
             ZipFile.CreateFromDirectory(audiosFolderPath, folder2SaveArchive);
         }
 
-        public static void CreateAudioArchiveFromFilesPaths(string[] audiosFolderPaths, string folder2SaveArchive) //folder2SaveArchive must contain .zip
+        public static void CreateAudioArchiveFromFilePaths(string[] audiosFolderPaths, string folder2SaveArchive) //folder2SaveArchive must contain .zip
         {
             using (ZipArchive archive = ZipFile.Open(folder2SaveArchive, ZipArchiveMode.Update))
             {

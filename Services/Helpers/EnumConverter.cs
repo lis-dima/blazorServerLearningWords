@@ -6,24 +6,6 @@ namespace lewBlazorServer.Services.Helpers
 {
     public class EnumConverter
     {
-        public static string TtsLang(Language language)
-        {
-            var res = "";
-            switch (language)
-            {
-                case Language.En:
-                    res = "en-GB";
-                    break;
-                case Language.Ru:
-                    res = "ru-RU";
-                    break;
-                case Language.Ua:
-                    res = "uk-UA";
-                    break;
-            }
-            return res;
-        }
-
         public static TtsSpeaker TtsSpeaker(Language language)
         {
             var res = Audio.TtsSpeaker.en_GB_OliverNeural;

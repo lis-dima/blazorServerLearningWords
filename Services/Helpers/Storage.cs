@@ -11,11 +11,6 @@ namespace lewBlazorServer.Services.Helpers
 {
     public class Storage
     {
-        public static bool HasAudio(EntityType type, int id)
-        {
-            return File.Exists(GetAudioPath(type, id, false));
-        }
-
         public static void DeleteAudio(string path)
         {
             if(File.Exists(path))
@@ -24,7 +19,6 @@ namespace lewBlazorServer.Services.Helpers
 
         public static string GetAudioPath(EntityType type, int id, bool createFolder)
         {
-            //var fileName = AppropriateFileName(text);
             var path = Path.Combine(new string[] {
                 Directory.GetCurrentDirectory(),
                 "wwwroot",
@@ -34,9 +28,7 @@ namespace lewBlazorServer.Services.Helpers
                 id + ".wav"
             });
             if (createFolder)
-            {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
-            }
             return path;
         }
 
